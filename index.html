@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elektrostatische Polarisation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #111827;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 1rem;
+        }
+
+        .container {
+            background-color: #1f2937;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            max-width: 56rem;
+            width: 100%;
+            position: relative;
+        }
+
+        h1 {
+            color: white;
+            font-size: 1.875rem;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        svg {
+            background-color: #374151;
+            border-radius: 0.5rem;
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .slider-container {
+            background-color: #374151;
+            border-radius: 0.5rem;
+            padding: 0.75rem;
+            margin-top: 1rem;
+        }
+
+        .slider-label {
+            color: white;
+            font-weight: 600;
+            font-size: 0.875rem;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .slider {
+            width: 100%;
+            height: 0.75rem;
+            background-color: #4b5563;
+            border-radius: 0.5rem;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .btn {
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            color: white;
+            font-size: 0.875rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-negative {
+            background-color: #2563eb;
+        }
+
+        .btn-negative:hover {
+            background-color: #1d4ed8;
+        }
+
+        .btn-positive {
+            background-color: #dc2626;
+        }
+
+        .btn-positive:hover {
+            background-color: #b91c1c;
+        }
+
+        .btn-info {
+            background-color: #4b5563;
+        }
+
+        .btn-info:hover {
+            background-color: #6b7280;
+        }
+
+        .info-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(17, 24, 39, 0.95);
+            border-radius: 0.5rem;
+            z-index: 10;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: 1.5rem;
+        }
+
+        .info-overlay.active {
+            display: flex;
+        }
+
+        .info-content {
+            background-color: #1f2937;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            max-width: 42rem;
+        }
+
+        .info-content h3 {
+            color: white;
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .info-content ul {
+            list-style: none;
+            color: #d1d5db;
+            font-size: 0.875rem;
+        }
+
+        .info-content li {
+            margin-bottom: 0.75rem;
+        }
+
+        .info-content strong {
+            font-weight: 600;
+        }
+
+        .btn-close {
+            width: 100%;
+            margin-top: 1.5rem;
+            padding: 0.5rem;
+            background-color: #2563eb;
+        }
+
+        .btn-close:hover {
+            background-color: #1d4ed8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Elektrostatische Polarisation</h1>
+
+        <div class="info-overlay" id="infoOverlay">
+            <div class="info-content">
+                <h3>Beobachtungen:</h3>
+                <ul>
+                    <li>🔵 <strong>Blaue Ladung (Elektronen):</strong> <span id="electronBehavior"></span></li>
+                    <li>🔴 <strong>Rote Ladung (Atomkerne):</strong> Bleibt nahezu an Ort und Stelle</li>
+                    <li>📏 <strong>Je näher der Stab:</strong> Desto stärker die Verschiebung und ovale Verformung</li>
+                    <li>⚡ <strong>Elektrisches Feld:</strong> Nimmt mit der Entfernung ab (1/r²-Gesetz)</li>
+                </ul>
+                <button class="btn btn-close" id="closeBtn">Schließen</button>
+            </div>
+        </div>
+
+        <svg id="simulation" viewBox="0 0 600 320">
+            <g id="fieldLines"></g>
+            <rect id="rod" x="35" y="110" width="30" height="100" rx="5" stroke-width="3" fill="#3b82f6" stroke="#1e40af"/>
+            <g id="rodCharges"></g>
+            <ellipse id="blueCharge" cy="160" fill="#3b82f6" opacity="0.7" stroke="#1e40af" stroke-width="2"/>
+            <circle id="redCharge" cy="160" r="39" fill="#ef4444" opacity="0.8" stroke="#dc2626" stroke-width="2"/>
+            <text id="plusSign" y="172" fill="white" font-size="48" text-anchor="middle" font-weight="bold"></text>
+            <text id="minusSign" y="172" fill="white" font-size="48" text-anchor="middle" font-weight="bold"></text>
+            <text id="rodLabel" y="240" fill="white" font-size="14" text-anchor="middle" font-weight="bold">Geladener Stab</text>
+            <foreignObject x="5" y="270" width="160" height="40">
+                <button class="btn btn-negative" id="chargeBtn">− Negativ geladen</button>
+            </foreignObject>
+            <foreignObject x="525" y="270" width="70" height="40">
+                <button class="btn btn-info" id="infoBtn">ℹ️ Info</button>
+            </foreignObject>
+        </svg>
+
+        <div class="slider-container">
+            <label class="slider-label">Stabposition:</label>
+            <input type="range" class="slider" id="positionSlider" min="50" max="300" value="50">
+        </div>
+    </div>
+
+    <script>
+        var state = {
+            rodX: 50,
+            isNegative: true,
+            objectCenterX: 450,
+            objectCenterY: 160,
+            objectRadius: 60
+        };
+
+        var elements = {
+            rod: document.getElementById('rod'),
+            rodCharges: document.getElementById('rodCharges'),
+            rodLabel: document.getElementById('rodLabel'),
+            blueCharge: document.getElementById('blueCharge'),
+            redCharge: document.getElementById('redCharge'),
+            plusSign: document.getElementById('plusSign'),
+            minusSign: document.getElementById('minusSign'),
+            fieldLines: document.getElementById('fieldLines'),
+            chargeBtn: document.getElementById('chargeBtn'),
+            infoBtn: document.getElementById('infoBtn'),
+            closeBtn: document.getElementById('closeBtn'),
+            slider: document.getElementById('positionSlider'),
+            infoOverlay: document.getElementById('infoOverlay')
+        };
+
+        function calculatePolarization() {
+            var distance = Math.abs(state.rodX - state.objectCenterX);
+            var maxDistance = 400;
+            var result = 1 - distance / maxDistance;
+            if (result < 0) result = 0;
+            if (result > 1) result = 1;
+            return result;
+        }
+
+        function updateSimulation() {
+            var polarizationStrength = calculatePolarization();
+            var blueShiftX = state.isNegative ? polarizationStrength * 30 : -polarizationStrength * 30;
+            var blueRadiusX = state.objectRadius + polarizationStrength * 25;
+            var blueRadiusY = state.objectRadius - polarizationStrength * 15;
+
+            elements.rod.setAttribute('x', state.rodX - 15);
+            elements.rodLabel.setAttribute('x', state.rodX);
+
+            elements.rodCharges.innerHTML = '';
+            for (var i = 0; i < 5; i++) {
+                var text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                text.setAttribute('x', state.rodX);
+                text.setAttribute('y', 130 + i * 20);
+                text.setAttribute('fill', 'white');
+                text.setAttribute('font-size', '24');
+                text.setAttribute('text-anchor', 'middle');
+                text.setAttribute('font-weight', 'bold');
+                text.textContent = state.isNegative ? '−' : '+';
+                elements.rodCharges.appendChild(text);
+            }
+
+            elements.fieldLines.innerHTML = '';
+            for (var j = 0; j < 12; j++) {
+                var angle = (j * Math.PI * 2) / 12;
+                var length = 80 + polarizationStrength * 40;
+                var endX = state.rodX + Math.cos(angle) * length;
+                var endY = 160 + Math.sin(angle) * length;
+                
+                var line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                line.setAttribute('x1', state.rodX);
+                line.setAttribute('y1', 160);
+                line.setAttribute('x2', endX);
+                line.setAttribute('y2', endY);
+                line.setAttribute('stroke', '#60a5fa');
+                line.setAttribute('stroke-width', '1');
+                line.setAttribute('opacity', 0.2 + polarizationStrength * 0.3);
+                line.setAttribute('stroke-dasharray', '4,4');
+                elements.fieldLines.appendChild(line);
+            }
+
+            elements.blueCharge.setAttribute('cx', state.objectCenterX + blueShiftX);
+            elements.blueCharge.setAttribute('rx', blueRadiusX);
+            elements.blueCharge.setAttribute('ry', blueRadiusY);
+
+            elements.redCharge.setAttribute('cx', state.objectCenterX - polarizationStrength * 5);
+
+            elements.plusSign.setAttribute('x', state.objectCenterX - polarizationStrength * 5);
+            elements.plusSign.setAttribute('opacity', polarizationStrength);
+            elements.plusSign.textContent = '+';
+
+            var minusX = state.objectCenterX + blueShiftX + (state.isNegative ? blueRadiusX * 0.5 : -blueRadiusX * 0.5);
+            elements.minusSign.setAttribute('x', minusX);
+            elements.minusSign.setAttribute('opacity', polarizationStrength);
+            elements.minusSign.textContent = '−';
+
+            if (state.isNegative) {
+                elements.rod.setAttribute('fill', '#3b82f6');
+                elements.rod.setAttribute('stroke', '#1e40af');
+            } else {
+                elements.rod.setAttribute('fill', '#ef4444');
+                elements.rod.setAttribute('stroke', '#dc2626');
+            }
+        }
+
+        function toggleCharge() {
+            state.isNegative = !state.isNegative;
+            state.rodX = 50;
+            elements.slider.value = 50;
+            
+            if (state.isNegative) {
+                elements.chargeBtn.textContent = '− Negativ geladen';
+                elements.chargeBtn.className = 'btn btn-negative';
+            } else {
+                elements.chargeBtn.textContent = '+ Positiv geladen';
+                elements.chargeBtn.className = 'btn btn-positive';
+            }
+            updateSimulation();
+        }
+
+        function showInfo() {
+            var behavior = state.isNegative 
+                ? 'Wird vom negativen Stab abgestoßen und verschiebt sich nach rechts'
+                : 'Wird vom positiven Stab angezogen und verschiebt sich nach links';
+            document.getElementById('electronBehavior').textContent = behavior;
+            elements.infoOverlay.classList.add('active');
+        }
+
+        function closeInfo() {
+            elements.infoOverlay.classList.remove('active');
+        }
+
+        elements.chargeBtn.onclick = toggleCharge;
+        elements.infoBtn.onclick = showInfo;
+        elements.closeBtn.onclick = closeInfo;
+
+        elements.slider.oninput = function() {
+            state.rodX = parseInt(this.value);
+            updateSimulation();
+        };
+
+        updateSimulation();
+    </script>
+</body>
+</html>
