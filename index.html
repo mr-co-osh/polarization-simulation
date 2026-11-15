@@ -350,18 +350,18 @@
 .stdfuss{display:block;clear:both;margin:32px 0 0;padding:14px max(16px,env(safe-area-inset-right,0px)) calc(18px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));border-top:1px solid rgba(128,128,128,.35);font:12.5px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:inherit;text-align:left;position:relative;z-index:1}
 .stdfuss *{box-sizing:border-box}
 .stdfuss p{margin:0 0 8px;max-width:72ch}
-.stdfuss details{margin:4px 0;max-width:72ch}
+.stdfuss .stdfuss-row{display:flex;flex-wrap:wrap;gap:0 24px;align-items:flex-start}
+.stdfuss details{margin:0}
+.stdfuss details[open]{flex:1 1 100%;order:1;max-width:72ch;margin-top:4px}
 .stdfuss summary{cursor:pointer;font-weight:700;padding:5px 0;min-height:30px}
 .stdfuss ul{margin:4px 0 8px;padding-left:20px}
 .stdfuss li{margin:3px 0}
 .stdfuss a{color:inherit;text-decoration:underline}
 .stdfuss .stdfuss-hint{opacity:.75;font-size:12px}
-/* nur diese Seite: Fuß unter die zentrierte Simulation setzen, helle Schrift auf dunklem Grund */
-body{flex-wrap:wrap;align-content:center}
-.stdfuss{flex:0 0 100%;color:#cbd5e1}
 </style>
 <footer class="stdfuss" lang="de">
 <p>Eigenes Unterrichtsmaterial. Kein offizielles Material der Bremer Bildungsbehörde. Dein Fortschritt wird nur in diesem Browser gespeichert.</p>
+<div class="stdfuss-row">
 <details><summary>Datenschutz</summary>
 <ul>
 <li><b>Keine Datensammlung:</b> Diese Seite erhebt keine personenbezogenen Daten. Keine Anmeldung, keine Cookies, kein Tracking, keine Formulare, die Daten verschicken.</li>
@@ -376,7 +376,9 @@ body{flex-wrap:wrap;align-content:center}
 <p>[Name]<br>[Anschrift]<br>[E-Mail-Adresse]</p>
 <p class="stdfuss-hint">Die Angaben werden nachgetragen.</p>
 </details>
-
+</div>
+<script>(function(){var d=document.querySelectorAll('.stdfuss details');d.forEach(function(x){x.addEventListener('toggle',function(){if(x.open)d.forEach(function(y){if(y!==x)y.open=false;});});});})();</script>
 </footer>
+<style>/* nur diese Seite: Fuß unter die zentrierte Simulation */body{flex-wrap:wrap;align-content:center}.stdfuss{flex:0 0 100%;color:#cbd5e1}</style>
 </body>
 </html>
