@@ -29,6 +29,8 @@ Stand: 15.11.2026 · gilt dauerhaft für jede bestehende und jede neue Seite.
 - Satz: „Eigenes Unterrichtsmaterial. Kein offizielles Material der Bremer Bildungsbehörde. Dein Fortschritt wird nur in diesem Browser gespeichert.“
 - Aufklappbarer Datenschutzhinweis mit den Punkten: keine Datensammlung, Speicherung nur im Browser, Hosting über GitHub Pages (GitHub, Inc., USA, verarbeitet die IP-Adresse), nichts von fremden Servern, Rechte nach DSGVO, Verantwortlicher.
 - Impressum: Platzhalter vorsehen. Die Angaben liefert die Lehrkraft nach. Nichts erfinden.
+- Schriftlizenzen: aufklappbar im Fuß (Liste der Schriften mit Copyright, vollständiger Text in neuem Tab).
+- Datenschutz, Impressum und Schriftlizenzen als feste Knöpfe nebeneinander; der Text klappt darunter auf, nichts springt.
 
 ## 5. Arbeitsweise
 - Vor jeder Änderung den aktuellen Stand holen (`git pull`), nie mit force pushen. Andere Sitzungen ändern dieselben Repositories.
